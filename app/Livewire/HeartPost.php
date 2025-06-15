@@ -4,21 +4,21 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use App\Models\Post;
-use \App\Models\Heart;
+use App\Models\Heart;
 
 class HeartPost extends Component
 {
 
     public Post $post;
-    public $post_id;
     public $heartCount;
 
    public function mount(Post $post)
    {
     $this->post = $post;
-    $this->post_id = $post->id;
 
-    $this->heartCount = Heart::where(['post_id'=>$this->post_id, 
+	// We shall retrieve post ID from the $post property to make our application more secure
+	
+    $this->heartCount = Heart::where(['post_id'=>$this->post->id, 
                                        'heart'=>true,
                                      ])->count();
                              
@@ -27,7 +27,7 @@ class HeartPost extends Component
     public function theHeart()
     {
       
-        $heart = Auth()->user()->hearts()->where('post_id', $this->post_id)->first();
+        $heart = Auth()->user()->hearts()->where('post_id', $this->post->id)->first();
         if($heart){
 
           $is_heart = $heart->heart;
@@ -37,11 +37,11 @@ class HeartPost extends Component
           $heart = new Heart();
          $heart->heart = true;
          $heart->user_id = Auth()->user()->id;
-         $heart->post_id = $this->post_id;
+         $heart->post_id = $this->post->id;
          $heart->save();
 
         }
-      $this->heartCount = Heart::where(['post_id'=>$this->post_id, 
+      $this->heartCount = Heart::where(['post_id'=>$this->post->id, 
                                        'heart'=>true,
                                      ])->count();
 
